@@ -1,5 +1,6 @@
-# Builds the Astro site and publishes it to GitHub Pages (www.5so.de) on every push to main.
-name: Deploy to GitHub Pages
+# Builds the Astro site and uploads it to the Surfer app on Cloudron (www.sobek.info) on every push to main.
+# Needs the repository secret SURFER_TOKEN (Surfer admin → Settings → Access Tokens).
+name: Deploy to www.sobek.info
 
 on:
   push:
@@ -8,28 +9,24 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
-  group: pages
+  group: deploy
   cancel-in-progress: false
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: withastro/action@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: 24
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - id: deployment
-        uses: actions/deploy-pages@v4
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      # cloudron-surfer 6.x matches Surfer 6.9 on Cloudron 9.0; after the Cloudron/Surfer 7 update switch to @cloudron/surfer.
+      - name: Upload to Surfer
+        env:
+          SURFER_TOKEN: ${{ secrets.SURFER_TOKEN }}
+        run: npx -y cloudron-surfer@6.4.1 put --delete --server www.sobek.info --token "$SURFER_TOKEN" dist/* /

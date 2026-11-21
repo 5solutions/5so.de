@@ -14,14 +14,14 @@ const up = (s: string) => s.toUpperCase();
 <Base design="c64">
   <div class="screen">
     <header class="top">
-      <a href="#main" class="brand"><Image src={logo} alt="" width={56} height={23} /> 5SO.DE</a>
+      <a href="#main" class="brand"><Image src={logo} alt="" width={56} height={23} /> SOBEK.INFO</a>
       <nav aria-label="Abschnitte"><ul>{nav.map((n, i) => <li><a href={n.href}><span aria-hidden="true">F{i + 1}</span> {n.label}</a></li>)}</ul></nav>
     </header>
 
     <main id="main">
       <section class="boot" aria-labelledby="h-hero">
         <div class="boot-text">
-          <p class="center">**** 5SO.DE PERSONAL SYSTEM V2 ****</p>
+          <p class="center">**** SOBEK.INFO PERSONAL SYSTEM V2 ****</p>
           <p class="center">{stats[0].value} JAHRE ERFAHRUNG · {stats[1].value} ZERTIFIKATE · 38911 IDEEN FREI</p>
           <p>READY.</p>
           <p class="typed"><span>LOAD "STEFAN",8,1</span></p>

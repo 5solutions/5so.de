@@ -1,4 +1,4 @@
-# 5so.de
+# sobek.info
 
 Persönliche Seite von Stefan Sobek. Statisch gebaut mit [Astro](https://astro.build), ohne Client-JavaScript, ohne Cookies, Schriften selbst gehostet.
 
@@ -34,8 +34,9 @@ Rechtstexte: `src/pages/impressum.astro`, `src/pages/datenschutz.astro`.
 
 ## Deployment
 
-Jeder Push auf `main` baut die Seite per GitHub Action (`.github/workflows/deploy.yml`) und veröffentlicht sie über GitHub Pages unter **https://www.5so.de**.
+Live unter **https://www.sobek.info**. Gehostet in einer Surfer-App auf dem Cloudron-Server (Hetzner, `my.rhenaniahinsbeck.de`).
 
-- Die alte Jekyll-Seite ist gesichert als Tag `v1-jekyll` und Branch `legacy-jekyll` (identisch mit `gh-pages`).
-- Rückfall auf die alte Seite: Repo → Settings → Pages → Source „Deploy from a branch“ → `gh-pages`.
-- `5so.de` ohne www zeigt per DNS (Hetzner) noch auf den Cloudron-Server. Für GitHub Pages bräuchte die Apex-Domain A-Records auf 185.199.108.153 – 185.199.111.153; geplant ist stattdessen später ein Umzug zu Hetzner. `npm run build` erzeugt dafür einfach statische Dateien in `dist/`, die auf jeden Webserver passen.
+- Jeder Push auf `main` baut die Seite per GitHub Action (`.github/workflows/deploy.yml`) und lädt `dist/` per `cloudron-surfer` hoch. Benötigt das Repo-Secret `SURFER_TOKEN` (Surfer-Admin unter `https://www.sobek.info/_admin` → Access Tokens).
+- Weiterleitungen (in Cloudron unter App → Standort → Weiterleitungen): `sobek.info`, `5so.de` → `www.sobek.info`. `www.5so.de` folgt, sobald der DNS-Eintrag umgestellt ist.
+- DNS liegt bei Hetzner (Console, Projekt „5so“ bzw. „DNS Migrated“). Cloudron-Domain `sobek.info` steht auf „Manual“, damit Cloudron die Apple-Mail-Einträge (MX, SPF, DKIM) nicht anfasst.
+- Alte Jekyll-Seite: Tag `v1-jekyll` / Branch `legacy-jekyll`.

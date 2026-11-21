@@ -9,7 +9,7 @@ import { designs, designUrl } from '../data/designs';
 
 const others = designs.filter((d) => d.slug !== 'terminal');
 
-const ps = 'stefan@5so.de:~$';
+const ps = 'stefan@sobek.info:~$';
 const commands = [
   { cmd: 'whoami', text: 'Kurzprofil (neofetch-Stil)' },
   { cmd: 'about', text: 'Über mich' },
@@ -28,7 +28,7 @@ const commands = [
     <div class="term" aria-label="Terminal">
       <div class="bar" aria-hidden="true">
         <span class="lights"><i></i><i></i><i></i></span>
-        <span class="title">stefan@5so.de — zsh — 80×24</span>
+        <span class="title">stefan@sobek.info — zsh — 80×24</span>
       </div>
 
       <div id="log" class="log" aria-live="polite">
@@ -39,7 +39,7 @@ const commands = [
           <div class="neo">
             <Image src={photo} alt="Porträt von Stefan Sobek" widths={[200, 400]} sizes="200px" loading="eager" />
             <div>
-              <h1 id="h-hero"><span class="g">stefan</span>@<span class="g">5so.de</span></h1>
+              <h1 id="h-hero"><span class="g">stefan</span>@<span class="g">sobek.info</span></h1>
               <p class="rule">-------------------</p>
               <dl>
                 <div><dt>Name</dt><dd>{person.name}</dd></div>
@@ -192,7 +192,7 @@ const commands = [
     return p;
   };
   const echo = (raw: string) => {
-    const p = line('<span class="ps">stefan@5so.de:~$</span> ');
+    const p = line('<span class="ps">stefan@sobek.info:~$</span> ');
     p.append(document.createTextNode(raw)); // user text never parsed as HTML
     return p;
   };
