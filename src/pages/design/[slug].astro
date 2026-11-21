@@ -1,0 +1,11 @@
+---
+import { designs, home } from '../../data/designs';
+import { components } from '../../designs';
+
+export function getStaticPaths() {
+  return designs.filter((d) => d.slug !== home).map((d) => ({ params: { slug: d.slug } }));
+}
+
+const Design = components[Astro.params.slug as keyof typeof components];
+---
+<Design />

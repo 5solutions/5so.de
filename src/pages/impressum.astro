@@ -1,0 +1,28 @@
+---
+import Legal from '../layouts/Legal.astro';
+import { person } from '../data/profile';
+---
+<Legal title="Impressum">
+  <h2>Angaben gemäß § 5 DDG</h2>
+  <address>
+    5Solutions<br />
+    Stefan Sobek<br />
+    Wilhelm-Reimes-Str. 31<br />
+    41334 Nettetal
+  </address>
+
+  <h2>Kontakt</h2>
+  <p>E-Mail: <a href={`mailto:${person.email}`}>{person.email}</a></p>
+
+  <h2>Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV</h2>
+  <p>Stefan Sobek, Anschrift wie oben</p>
+
+  <h2>Haftung für Inhalte</h2>
+  <p>Die Inhalte dieser Seite wurden mit Sorgfalt erstellt. Für die Richtigkeit, Vollständigkeit und Aktualität kann ich jedoch keine Gewähr übernehmen. Als Diensteanbieter bin ich für eigene Inhalte nach den allgemeinen Gesetzen verantwortlich. Bei Bekanntwerden von Rechtsverletzungen entferne ich die betreffenden Inhalte umgehend.</p>
+
+  <h2>Haftung für Links</h2>
+  <p>Diese Seite enthält Links zu externen Websites Dritter, auf deren Inhalte ich keinen Einfluss habe. Für die Inhalte der verlinkten Seiten ist stets der jeweilige Anbieter verantwortlich. Bei Bekanntwerden von Rechtsverletzungen entferne ich derartige Links umgehend.</p>
+
+  <h2>Urheberrecht</h2>
+  <p>Die Inhalte und Bilder dieser Seite unterliegen dem deutschen Urheberrecht. Vervielfältigung, Bearbeitung und Verbreitung außerhalb der Grenzen des Urheberrechts bedürfen meiner schriftlichen Zustimmung.</p>
+</Legal>

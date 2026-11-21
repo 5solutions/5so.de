@@ -1,0 +1,333 @@
+---
+// Design "Terminal": interaktive Shell. Ohne JS ist alles als Transkript lesbar; mit JS tippt man Befehle (help, projekte …).
+import '@fontsource-variable/jetbrains-mono';
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import photo from '../assets/stefan-sobek.jpg';
+import { person, quote, about, stats, focus, experience, projects, certifications, education, languages } from '../data/profile';
+import { designs, designUrl } from '../data/designs';
+
+const others = designs.filter((d) => d.slug !== 'terminal');
+
+const ps = 'stefan@5so.de:~$';
+const commands = [
+  { cmd: 'whoami', text: 'Kurzprofil (neofetch-Stil)' },
+  { cmd: 'about', text: 'Über mich' },
+  { cmd: 'skills', text: 'Fünf Schwerpunkte' },
+  { cmd: 'projects', text: 'Ausgewählte Projekte' },
+  { cmd: 'career', text: 'Werdegang & Ausbildung' },
+  { cmd: 'certs', text: 'Zertifizierungen & Sprachen' },
+  { cmd: 'quote', text: 'Leitmotiv' },
+  { cmd: 'contact', text: 'Kontakt' },
+  { cmd: 'design', text: 'Diese Seite in anderen Designs' },
+  { cmd: 'clear', text: 'Bildschirm leeren' },
+];
+---
+<Base design="terminal">
+  <main id="main" class="desk">
+    <div class="term" aria-label="Terminal">
+      <div class="bar" aria-hidden="true">
+        <span class="lights"><i></i><i></i><i></i></span>
+        <span class="title">stefan@5so.de — zsh — 80×24</span>
+      </div>
+
+      <div id="log" class="log" aria-live="polite">
+        <p class="sys">Last login: {new Date().toLocaleDateString('de-DE', { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' })} on ttys005 · Tippe <b>help</b> oder klick unten auf einen Befehl.</p>
+
+        <section class="out" data-cmd="whoami" aria-labelledby="h-hero">
+          <p class="cmdline"><span class="ps">{ps}</span> whoami</p>
+          <div class="neo">
+            <Image src={photo} alt="Porträt von Stefan Sobek" widths={[200, 400]} sizes="200px" loading="eager" />
+            <div>
+              <h1 id="h-hero"><span class="g">stefan</span>@<span class="g">5so.de</span></h1>
+              <p class="rule">-------------------</p>
+              <dl>
+                <div><dt>Name</dt><dd>{person.name}</dd></div>
+                <div><dt>Rolle</dt><dd>{person.role}</dd></div>
+                <div><dt>Auch</dt><dd>{person.roles.join(', ')}</dd></div>
+                <div><dt>Ort</dt><dd>{person.location}</dd></div>
+                <div><dt>Uptime</dt><dd>{stats[0].value} Jahre</dd></div>
+                <div><dt>Certs</dt><dd>{certifications.length} installiert</dd></div>
+                <div><dt>Teams</dt><dd>{stats[2].label.replace('Personen in', `${stats[2].value} Personen in`)}</dd></div>
+                <div><dt>Locale</dt><dd>de_DE, en_GB, nl_NL</dd></div>
+                <div><dt>Shell</dt><dd>scrum --kanban --okr</dd></div>
+              </dl>
+              <p class="swatches" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></p>
+            </div>
+          </div>
+          <p class="motd">{person.headline} <span class="c">{person.lead}</span></p>
+        </section>
+
+        <section class="out" data-cmd="help">
+          <p class="cmdline"><span class="ps">{ps}</span> help</p>
+          <table class="help">
+            <tbody>{commands.map((c) => <tr><td><span class="y">{c.cmd}</span></td><td>{c.text}</td></tr>)}</tbody>
+          </table>
+        </section>
+
+        <section class="out" data-cmd="about" id="ueber" aria-labelledby="h-about">
+          <p class="cmdline"><span class="ps">{ps}</span> cat ueber-mich.md</p>
+          <h2 id="h-about"><span class="c"># </span>Über mich</h2>
+          {about.map((p) => <p>{p}</p>)}
+        </section>
+
+        <section class="out" data-cmd="skills" id="schwerpunkte" aria-labelledby="h-skills">
+          <p class="cmdline"><span class="ps">{ps}</span> ls -l skills/</p>
+          <h2 id="h-skills" class="sr">Schwerpunkte</h2>
+          <p class="c">total 5</p>
+          <ul class="ls">
+            {focus.map((f, i) => (
+              <li>
+                <span class="perm">drwxr-xr-x</span>
+                <div><h3 class="b">{f.title}/</h3><p>{f.text}</p><p class="tags">{f.tags.map((t) => <span>#{t}</span>)}</p></div>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        <section class="out" data-cmd="projects" id="projekte" aria-labelledby="h-projects">
+          <p class="cmdline"><span class="ps">{ps}</span> git log --projects --oneline</p>
+          <h2 id="h-projects" class="sr">Projekte</h2>
+          <ul class="gitlog">
+            {projects.map((p, i) => (
+              <li>
+                <p><span class="y">{(0x5a17c + i * 0x3f1d).toString(16)}</span> <span class="g">({p.years})</span> <strong>{p.link ? <a href={p.link}>{p.title} ↗</a> : p.title}</strong></p>
+                <p class="c">Author: {p.role} · {p.domain}</p>
+                <p>{p.text}</p>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        <section class="out" data-cmd="career" id="werdegang" aria-labelledby="h-career">
+          <p class="cmdline"><span class="ps">{ps}</span> history | grep job</p>
+          <h2 id="h-career" class="sr">Werdegang</h2>
+          <ol class="hist">
+            {experience.map((e, i) => <li><span class="c">{String(experience.length - i).padStart(4, ' ')}</span><span class="y">{e.from}–{e.to}</span><span><strong>{e.company}</strong> <span class="c">— {e.role}</span></span></li>)}
+          </ol>
+          <p class="cmdline"><span class="ps">{ps}</span> cat ausbildung.txt</p>
+          <ul class="hist">
+            {education.map((e) => <li><span class="c">   ·</span><span class="y">{e.from}–{e.to}</span><span><strong>{e.title}</strong>, {e.place} <span class="c">— {e.note}</span></span></li>)}
+          </ul>
+        </section>
+
+        <section class="out" data-cmd="certs" aria-labelledby="h-certs">
+          <p class="cmdline"><span class="ps">{ps}</span> apt list --installed | grep cert</p>
+          <h2 id="h-certs" class="sr">Zertifizierungen und Sprachen</h2>
+          <ul class="pkgs">
+            {certifications.map((c) => <li><span class="g">{c.name}</span><span class="c">/{c.issuer}</span> <span class="y">{c.date}</span> [installed]</li>)}
+          </ul>
+          <p class="cmdline"><span class="ps">{ps}</span> locale -a</p>
+          <ul class="pkgs">{languages.map((l) => <li><span class="g">{l.name}</span> <span class="c"># {l.level}</span></li>)}</ul>
+        </section>
+
+        <section class="out" data-cmd="quote">
+          <p class="cmdline"><span class="ps">{ps}</span> fortune</p>
+          <blockquote class="fortune">“{quote.text}”<br /><span class="c">    — {quote.author}</span></blockquote>
+        </section>
+
+        <section class="out" data-cmd="contact" id="kontakt" aria-labelledby="h-contact">
+          <p class="cmdline"><span class="ps">{ps}</span> contact --all</p>
+          <h2 id="h-contact" class="sr">Kontakt</h2>
+          <ul class="contact">
+            <li><span class="c">mail    </span> <a href={`mailto:${person.email}`}>{person.email}</a></li>
+            <li><span class="c">linkedin</span> <a href={person.linkedin}>{person.linkedin.replace('https://www.', '')}</a></li>
+            <li><span class="c">github  </span> <a href={person.github}>{person.github.replace('https://', '')}</a></li>
+          </ul>
+          <p class="g">→ Projekte, Vorträge, Trainings – oder einfach Austausch. Ich freu mich.</p>
+        </section>
+
+        <section class="out" data-cmd="design" aria-labelledby="h-design">
+          <p class="cmdline"><span class="ps">{ps}</span> design --list</p>
+          <h2 id="h-design" class="sr">Andere Designs</h2>
+          <ul class="contact">
+            <li><span class="g">* terminal   </span> <span class="c">(aktiv)</span></li>
+            {others.map((d) => <li><span class="c">  {d.slug.padEnd(11, ' ')}</span> <a href={designUrl(d.slug)}>{d.name} ansehen →</a></li>)}
+          </ul>
+          <p class="c">Gleicher Inhalt, andere Optik. Zurück geht's über den Umschalter unten rechts.</p>
+        </section>
+      </div>
+
+      <form id="prompt" class="prompt js-only" autocomplete="off">
+        <label for="cmd" class="ps">{ps}</label>
+        <input id="cmd" name="cmd" type="text" spellcheck="false" autocapitalize="off" enterkeyhint="send" aria-describedby="hint" />
+      </form>
+      <p id="hint" class="chips js-only">
+        {commands.filter((c) => c.cmd !== 'clear').map((c) => <button type="button" data-run={c.cmd}>{c.cmd}</button>)}
+      </p>
+    </div>
+
+    <footer class="foot">
+      <span>© {new Date().getFullYear()} {person.name}</span>
+      <a href="/impressum/">impressum</a>
+      <a href="/datenschutz/">datenschutz</a>
+      <span>design: {others.map((d, i) => <>{i > 0 && ' · '}<a href={designUrl(d.slug)}>{d.slug}</a></>)}</span>
+    </footer>
+  </main>
+</Base>
+
+<script>
+  const log = document.getElementById('log')!;
+  const form = document.getElementById('prompt') as HTMLFormElement;
+  const input = document.getElementById('cmd') as HTMLInputElement;
+  document.documentElement.classList.add('js');
+
+  // Pull every pre-rendered output into a lookup; keep only the intro (whoami + help) on screen.
+  const outputs = new Map<string, HTMLElement>();
+  log.querySelectorAll<HTMLElement>('section.out').forEach((s) => {
+    outputs.set(s.dataset.cmd!, s.cloneNode(true) as HTMLElement);
+    if (!['whoami', 'help'].includes(s.dataset.cmd!)) s.remove();
+  });
+  const alias: Record<string, string> = {
+    hilfe: 'help', '?': 'help', ls: 'help', ueber: 'about', 'über': 'about', 'cat': 'about', neofetch: 'whoami',
+    schwerpunkte: 'skills', projekte: 'projects', werdegang: 'career', zertifikate: 'certs', kontakt: 'contact', fortune: 'quote', cls: 'clear', theme: 'design', designs: 'design',
+  };
+  const history: string[] = [];
+  let hi = 0;
+
+  const line = (html: string) => {
+    const p = document.createElement('p');
+    p.className = 'cmdline';
+    p.innerHTML = html;
+    return p;
+  };
+  const echo = (raw: string) => {
+    const p = line('<span class="ps">stefan@5so.de:~$</span> ');
+    p.append(document.createTextNode(raw)); // user text never parsed as HTML
+    return p;
+  };
+
+  function run(raw: string) {
+    const cmd = raw.trim().toLowerCase();
+    if (cmd) { history.push(raw); hi = history.length; }
+    const name = alias[cmd.split(/\s+/)[0]] ?? cmd.split(/\s+/)[0];
+    if (name === 'clear') { log.replaceChildren(); return; }
+    const box = document.createElement('section');
+    box.className = 'out';
+    box.append(echo(raw));
+    const out = outputs.get(name);
+    if (out) {
+      const copy = out.cloneNode(true) as HTMLElement;
+      copy.querySelector('.cmdline')?.remove();
+      copy.removeAttribute('id');
+      box.append(...copy.childNodes);
+    } else if (name === 'sudo') {
+      box.append(line('<span class="r">Netter Versuch.</span> Für Admin-Rechte bitte <b>contact</b> ausführen.'));
+    } else if (name === 'exit') {
+      box.append(line('<span class="c">Es gibt kein Entkommen. Aber es gibt</span> <b>contact</b>.'));
+    } else if (name) {
+      const p = line('<span class="r">zsh: command not found: </span>');
+      p.append(document.createTextNode(name), ' — tippe ', Object.assign(document.createElement('b'), { textContent: 'help' }));
+      box.append(p);
+    }
+    log.append(box);
+    form.scrollIntoView({ block: 'end', behavior: 'smooth' });
+  }
+
+  form.addEventListener('submit', (e) => { e.preventDefault(); run(input.value); input.value = ''; });
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowUp' && hi > 0) { input.value = history[--hi]; e.preventDefault(); }
+    else if (e.key === 'ArrowDown') { hi = Math.min(hi + 1, history.length); input.value = history[hi] ?? ''; e.preventDefault(); }
+    else if (e.key === 'Tab') {
+      const hit = [...outputs.keys(), 'clear'].find((c) => input.value && c.startsWith(input.value.toLowerCase()));
+      if (hit) { input.value = hit; e.preventDefault(); }
+    } else if (e.key === 'l' && e.ctrlKey) { e.preventDefault(); run('clear'); }
+  });
+  document.querySelectorAll<HTMLButtonElement>('[data-run]').forEach((b) => b.addEventListener('click', () => { run(b.dataset.run!); input.focus({ preventScroll: true }); }));
+  // Clicking into the terminal focuses the prompt, unless the user is selecting text or clicking a link.
+  document.querySelector('.term')!.addEventListener('click', (e) => {
+    if (!(e.target as HTMLElement).closest('a, button') && !getSelection()?.toString()) input.focus({ preventScroll: true });
+  });
+</script>
+
+<style is:global>
+  :root {
+    color-scheme: dark;
+    --bg: #0d1117; --bar: #161b22; --line: #30363d; --fg: #d6dde5; --c: #8b949e;
+    --g: #7ee787; --y: #e3b341; --b: #79c0ff; --p: #d2a8ff; --r: #ff7b72;
+    --mono: 'JetBrains Mono Variable', ui-monospace, monospace;
+  }
+  body { background: radial-gradient(70rem 40rem at 50% -20%, #2a2f6b 0%, transparent 60%), radial-gradient(50rem 30rem at 100% 100%, #3b1d4a, transparent 60%), #07080c;
+    color: var(--fg); font: 400 .95rem/1.6 var(--mono); min-height: 100vh; }
+  a { color: var(--b); }
+  ::selection { background: var(--b); color: var(--bg); }
+  :focus-visible { outline: 2px solid var(--y); outline-offset: 2px; }
+  .js-only { display: none !important; }
+  .js .js-only { display: flex !important; }
+</style>
+
+<style>
+  .desk { max-width: 64rem; margin: 0 auto; padding: clamp(.5rem, 4vw, 3rem) clamp(.5rem, 2vw, 1rem) 2rem; }
+  .term { background: rgb(13 17 23 / .94); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; box-shadow: 0 30px 80px rgb(0 0 0 / .55); backdrop-filter: blur(10px); }
+  .bar { display: flex; align-items: center; gap: 1rem; padding: .6rem .9rem; background: var(--bar); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 2; }
+  .lights { display: flex; gap: .45rem; }
+  .lights i { width: .75rem; height: .75rem; border-radius: 50%; background: #ff5f57; }
+  .lights i:nth-child(2) { background: #febc2e; } .lights i:nth-child(3) { background: #28c840; }
+  .title { flex: 1; text-align: center; color: var(--c); font-size: .78rem; margin-right: 3.5rem; }
+
+  .log { padding: 1.25rem clamp(1rem, 3vw, 1.75rem) .5rem; }
+  .log :global(p) { margin: 0 0 .6rem; }
+  .log :global(.out) { margin-bottom: 1.5rem; }
+  .log :global(.cmdline) { margin: 0 0 .75rem; color: var(--fg); overflow-wrap: anywhere; }
+  .log :global(.ps), .prompt .ps { color: var(--g); font-weight: 600; margin-right: .5ch; }
+  .log :global(.c) { color: var(--c); } .log :global(.g) { color: var(--g); } .log :global(.y) { color: var(--y); } .log :global(.r) { color: var(--r); }
+  .log :global(.b), .log :global(b) { color: var(--b); font-weight: 600; }
+  .log :global(.sr) { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .sys { color: var(--c); font-size: .82rem; }
+
+  .log :global(.neo) { display: grid; grid-template-columns: 11rem minmax(0, 1fr); gap: 2rem; align-items: start; }
+  .log :global(.neo img) { width: 100%; border-radius: 6px; filter: grayscale(.2) contrast(1.05); border: 1px solid var(--line); }
+  .log :global(h1) { font-size: 1rem; margin: 0; font-weight: 700; color: var(--fg); }
+  .log :global(.rule) { color: var(--c); margin: 0 0 .3rem !important; }
+  .log :global(.neo dl) { margin: 0; }
+  .log :global(.neo dl div) { display: flex; gap: .5ch; }
+  .log :global(.neo dt) { color: var(--p); font-weight: 600; }
+  .log :global(.neo dt::after) { content: ':'; color: var(--fg); }
+  .log :global(.neo dd) { margin: 0; }
+  .log :global(.swatches) { display: flex; margin-top: .9rem !important; }
+  .log :global(.swatches i) { width: 1.6rem; height: .9rem; }
+  .log :global(.swatches i:nth-child(1)) { background: #484f58; } .log :global(.swatches i:nth-child(2)) { background: var(--r); }
+  .log :global(.swatches i:nth-child(3)) { background: var(--g); } .log :global(.swatches i:nth-child(4)) { background: var(--y); }
+  .log :global(.swatches i:nth-child(5)) { background: var(--b); } .log :global(.swatches i:nth-child(6)) { background: var(--p); }
+  .log :global(.swatches i:nth-child(7)) { background: #56d4dd; } .log :global(.swatches i:nth-child(8)) { background: var(--fg); }
+  .log :global(.motd) { margin-top: 1.25rem !important; font-weight: 700; font-size: 1.05rem; }
+  .log :global(.motd .c) { display: block; font-weight: 400; font-size: .95rem; }
+
+  .log :global(.help) { border-collapse: collapse; }
+  .log :global(.help td) { padding: .1rem 2.5rem .1rem 0; vertical-align: top; }
+  .log :global(h2) { font-size: 1rem; margin: 0 0 .6rem; color: var(--p); }
+  .log :global(.ls), .log :global(.gitlog), .log :global(.hist), .log :global(.pkgs), .log :global(.contact) { list-style: none; margin: 0 0 1rem; padding: 0; }
+  .log :global(.ls li) { display: grid; grid-template-columns: 11ch minmax(0, 1fr); gap: 1.5ch; margin-bottom: 1rem; }
+  .log :global(.perm) { color: var(--c); }
+  .log :global(.ls h3) { font-size: .95rem; margin: 0 0 .2rem; }
+  .log :global(.tags) { display: flex; flex-wrap: wrap; gap: 0 1.5ch; color: var(--y); font-size: .85rem; }
+  .log :global(.gitlog li) { margin-bottom: 1.1rem; }
+  .log :global(.gitlog p) { margin: 0 0 .15rem; }
+  .log :global(.gitlog a) { color: inherit; }
+  .log :global(.hist li) { display: grid; grid-template-columns: 4ch 16ch minmax(0, 1fr); gap: 1.5ch; margin-bottom: .35rem; white-space: pre; }
+  .log :global(.hist li > span:last-child) { white-space: normal; }
+  .log :global(.pkgs li) { margin-bottom: .2rem; }
+  .log :global(.contact li) { white-space: pre; margin-bottom: .2rem; overflow-wrap: anywhere; }
+  .log :global(.fortune) { margin: 0; color: var(--y); font-size: 1.05rem; }
+
+  .prompt { align-items: center; padding: 0 clamp(1rem, 3vw, 1.75rem) .75rem; }
+  .prompt input { flex: 1; min-width: 0; background: transparent; border: 0; color: var(--fg); font: inherit; caret-color: var(--g); padding: .2rem 0; outline: none; }
+  .chips { flex-wrap: wrap; gap: .4rem; margin: 0; padding: .75rem clamp(1rem, 3vw, 1.75rem) 1rem; border-top: 1px solid var(--line); background: var(--bar); }
+  .chips button { font: .78rem var(--mono); color: var(--fg); background: transparent; border: 1px solid var(--line); border-radius: 6px; padding: .3rem .65rem; cursor: pointer; }
+  .chips button:hover { border-color: var(--g); color: var(--g); }
+
+  .foot { display: flex; flex-wrap: wrap; gap: .5rem 1.5rem; justify-content: center; padding: 1.5rem 0 3rem; font-size: .8rem; color: var(--c); }
+  .foot a { color: var(--c); }
+
+  @media (max-width: 640px) {
+    .log :global(.neo) { grid-template-columns: minmax(0, 1fr); gap: 1rem; }
+    .log :global(.neo img) { width: 8rem; }
+    .log :global(.neo dl div) { flex-wrap: wrap; }
+    .log :global(.ls li) { grid-template-columns: minmax(0, 1fr); gap: 0; }
+    .log :global(.perm) { display: none; }
+    .log :global(.hist li) { grid-template-columns: minmax(0, 1fr); white-space: normal; gap: 0; }
+    .log :global(.hist li > span:first-child) { display: none; }
+    .log :global(.contact li) { white-space: normal; }
+    .title { display: none; }
+  }
+</style>

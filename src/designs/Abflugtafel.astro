@@ -1,0 +1,388 @@
+---
+// Design "Abflugtafel": Flughafen-Signaletik, Split-Flap-Anzeige, Projekte als Abflüge, Werdegang als Ankünfte, Kontakt als Bordkarte.
+import '@fontsource-variable/inter';
+import '@fontsource-variable/jetbrains-mono';
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import photo from '../assets/stefan-sobek.jpg';
+import { person, quote, about, stats, focus, experience, projects, certifications, education, languages } from '../data/profile';
+import { designs, designUrl } from '../data/designs';
+
+const up = (s: string) => s.toUpperCase();
+const flight = (years: string) => `SO ${years.slice(2, 4)}${years.length > 4 ? years.slice(-2) : '00'}`;
+const tiles = (s: string) => up(s).split(' ');
+---
+<Base design="abflugtafel">
+  <header class="sign">
+    <a href="#main" class="home"><span class="pict" aria-hidden="true">✈</span> 5so.de</a>
+    <nav aria-label="Abschnitte">
+      <ul>
+        <li><a href="#ueber"><span class="pict" aria-hidden="true">i</span> Info</a></li>
+        <li><a href="#schwerpunkte"><span class="pict" aria-hidden="true">A</span> Gates</a></li>
+        <li><a href="#projekte"><span class="pict dep" aria-hidden="true">✈</span> Abflug</a></li>
+        <li><a href="#werdegang"><span class="pict arr" aria-hidden="true">✈</span> Ankunft</a></li>
+        <li><a href="#kontakt"><span class="pict" aria-hidden="true">✓</span> Check-in</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="hero" aria-labelledby="h-hero">
+      <div class="board big">
+        <p class="board-label">NÄCHSTER ABFLUG · NEXT DEPARTURE</p>
+        <h1 id="h-hero" class="flaps xl" aria-label={person.name}>
+          {tiles(person.name).map((w) => <span class="word" aria-hidden="true">{[...w].map((c) => <span class="f" data-c={c}>{c}</span>)}</span>)}
+        </h1>
+        <p class="flaps sm" aria-label={person.role}>
+          {tiles(person.role).map((w) => <span class="word" aria-hidden="true">{[...w].map((c) => <span class="f" data-c={c}>{c}</span>)}</span>)}
+        </p>
+        <div class="hero-row">
+          <dl class="facts">
+            <div><dt>Ziel</dt><dd>{person.headline.replace('Ich bringe ', '').replace(' ins Ziel.', '')} → Ziel</dd></div>
+            <div><dt>Abflug</dt><dd>{person.location}</dd></div>
+            <div><dt>Status</dt><dd class="ok"><span class="blink" aria-hidden="true">●</span> Boarding</dd></div>
+          </dl>
+          <a class="checkin" href="#kontakt">Jetzt einchecken →</a>
+        </div>
+      </div>
+      <aside class="passport" aria-label="Reisepass">
+        <p class="pp-head">REISEPASS · PASSPORT · PASPOORT</p>
+        <Image src={photo} alt="Porträt von Stefan Sobek" widths={[220, 440]} sizes="220px" loading="eager" />
+        <dl>
+          <div><dt>Name</dt><dd>{up(person.name)}</dd></div>
+          <div><dt>Wohnort</dt><dd>{up(person.location)}</dd></div>
+          <div><dt>Flugerfahrung</dt><dd>{stats[0].value} JAHRE</dd></div>
+        </dl>
+        <p class="mrz" aria-hidden="true">P&lt;D&lt;&lt;SOBEK&lt;&lt;STEFAN&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;<br />PMP&lt;PSM2&lt;ACP&lt;TOGAF&lt;&lt;5SO&lt;DE&lt;&lt;&lt;&lt;</p>
+      </aside>
+    </section>
+
+    <div class="ticker" aria-label={`Zitat: ${quote.text} – ${quote.author}`}>
+      <p aria-hidden="true">
+        {[0, 1].map(() => <span>★ {up(quote.text)} — {up(quote.author)} ★ {stats.map((s) => `${s.value} ${up(s.label)}`).join(' · ')} </span>)}
+      </p>
+    </div>
+
+    <section id="ueber" class="info wrap" aria-labelledby="h-ueber">
+      <h2 id="h-ueber" class="sign-h"><span class="pict" aria-hidden="true">i</span> Information <small>Über mich</small></h2>
+      <div class="cols">
+        <div>{about.map((p) => <p>{p}</p>)}</div>
+        <ul class="kpis">
+          {stats.map((s, i) => (
+            <li style={`--r:${[-2, 1.5, -1, 2][i]}deg`}>
+              <span class="tag-code" aria-hidden="true">5SO · {['EXP', 'CRT', 'TMS', 'LNG'][i]}</span>
+              <strong class="sr">{s.value}</strong>
+              <span class="flaps" aria-hidden="true"><span class="word">{[...s.value].map((c) => <span class="f" data-c={c}>{c}</span>)}</span></span>
+              <span class="tag-label">{s.label}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <section id="schwerpunkte" class="wrap" aria-labelledby="h-gates">
+      <h2 id="h-gates" class="sign-h"><span class="pict" aria-hidden="true">A</span> Gates A1–A5 <small>Schwerpunkte</small></h2>
+      <div class="gates">
+        {focus.map((f, i) => (
+          <article>
+            <p class="gate"><span><small>Gate</small> A{i + 1}</span><span aria-hidden="true">→</span></p>
+            <h3>{f.title}</h3>
+            <p>{f.text}</p>
+            <p class="via">via {f.tags.join(' · ')}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section id="projekte" class="wrap" aria-labelledby="h-dep">
+      <h2 id="h-dep" class="sign-h"><span class="pict dep" aria-hidden="true">✈</span> Abflug · Departures <small>Ausgewählte Projekte</small></h2>
+      <div class="board">
+        <div class="thead" aria-hidden="true"><span>Zeit</span><span>Flug</span><span>Ziel</span><span>Bereich</span><span>Status</span></div>
+        <ul class="rows">
+          {projects.map((p) => (
+            <li>
+              <details>
+                <summary>
+                  <span class="t">{p.years}</span>
+                  <span class="fl">{flight(p.years)}</span>
+                  <span class="dest">{up(p.title)}</span>
+                  <span class="dom">{p.domain}</span>
+                  <span class="st">Gelandet</span>
+                </summary>
+                <div class="more"><p><strong>{p.role}.</strong> {p.text}</p>{p.link && <p><a href={p.link}>{p.link.replace('https://', '')} ↗</a></p>}</div>
+              </details>
+            </li>
+          ))}
+        </ul>
+        <p class="board-foot">▸ Zeile anklicken für Details</p>
+      </div>
+    </section>
+
+    <section id="werdegang" class="wrap" aria-labelledby="h-arr">
+      <h2 id="h-arr" class="sign-h"><span class="pict arr" aria-hidden="true">✈</span> Ankunft · Arrivals <small>Werdegang</small></h2>
+      <div class="board">
+        <div class="thead arr-head" aria-hidden="true"><span>Zeit</span><span>Von</span><span>Rolle</span><span>Status</span></div>
+        <ul class="rows arr">
+          {experience.map((e, i) => (
+            <li>
+              <span class="t">{e.from.slice(-4)}</span>
+              <span class="dest">{up(e.company)}</span>
+              <span class="dom">{e.role}</span>
+              <span class={i === 0 ? 'st now' : 'st'}>{i === 0 ? 'An Bord' : 'Gelandet'}</span>
+            </li>
+          ))}
+          {education.map((e) => (
+            <li>
+              <span class="t">{e.from}</span>
+              <span class="dest">{up(e.place)}</span>
+              <span class="dom">{e.title}</span>
+              <span class="st">Abschluss</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <section class="wrap" aria-labelledby="h-stamps">
+      <h2 id="h-stamps" class="sign-h"><span class="pict" aria-hidden="true">✓</span> Stempel im Pass <small>Zertifizierungen & Sprachen</small></h2>
+      <ul class="stamps">
+        {certifications.map((c, i) => (
+          <li style={`--r:${((i * 37) % 17) - 8}deg;--c:${['#c0392b', '#1f4fa8', '#1d7a4a', '#7b3fa0'][i % 4]}`}>
+            <span class="sd">{c.date}</span><strong>{c.name}</strong><span>{c.issuer}</span>
+          </li>
+        ))}
+      </ul>
+      <p class="langs">Visa: {languages.map((l) => <span><strong>{l.name}</strong> {l.level}</span>)}</p>
+    </section>
+
+    <section id="kontakt" class="wrap" aria-labelledby="h-kontakt">
+      <h2 id="h-kontakt" class="sign-h"><span class="pict" aria-hidden="true">✓</span> Check-in <small>Kontakt</small></h2>
+      <div class="pass">
+        <div class="pass-main">
+          <p class="airline">5SO AIRLINES · BORDKARTE · BOARDING PASS</p>
+          <div class="route">
+            <div><span>Von</span><strong>SIE</strong><small>Ihre Idee</small></div>
+            <span class="plane" aria-hidden="true">✈</span>
+            <div><span>Nach</span><strong>STS</strong><small>{person.name}</small></div>
+          </div>
+          <dl class="pass-grid">
+            <div><dt>Flug</dt><dd>SO 2026</dd></div>
+            <div><dt>Gate</dt><dd>E-Mail</dd></div>
+            <div><dt>Sitz</dt><dd>1A</dd></div>
+            <div><dt>Boarding</dt><dd>jederzeit</dd></div>
+          </dl>
+          <p class="pass-cta">
+            <a class="btn" href={`mailto:${person.email}`}>{person.email}</a>
+            <a class="btn ghost" href={person.linkedin}>LinkedIn ↗</a>
+            <a class="btn ghost" href={person.github}>GitHub ↗</a>
+          </p>
+        </div>
+        <div class="stub" aria-hidden="true">
+          <p>SO 2026</p><p class="seat">1A</p>
+          <div class="barcode"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot wrap">
+    <span>© {new Date().getFullYear()} {person.name}</span>
+    <a href="/impressum/">Impressum</a>
+    <a href="/datenschutz/">Datenschutz</a>
+    <span class="alt">Andere Designs: {designs.filter((d) => d.slug !== 'abflugtafel').map((d, i) => <>{i > 0 && ' · '}<a href={designUrl(d.slug)}>{d.name}</a></>)}</span>
+  </footer>
+</Base>
+
+<script>
+  // Split-flap effect: each tile rattles through random characters before landing on its letter.
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    document.querySelectorAll<HTMLElement>('.flaps .f').forEach((el, i) => {
+      const target = el.dataset.c!;
+      let n = 6 + (i % 7) + Math.floor(i / 6);
+      const tick = () => {
+        el.textContent = n-- > 0 ? chars[Math.floor(Math.random() * chars.length)] : target;
+        el.classList.remove('flip'); void el.offsetWidth; el.classList.add('flip');
+        if (n >= 0) setTimeout(tick, 55);
+      };
+      setTimeout(tick, 200 + i * 25);
+    });
+  }
+</script>
+
+<style is:global>
+  :root {
+    color-scheme: light;
+    --sign: #ffcc00; --ink: #111214; --board: #16171a; --tile: #232428; --flap: #f3f1ea; --amber: #ffb000;
+    --bg: #eef0f2; --muted: #5d6470; --ok: #3fd27a;
+    --sans: 'Inter Variable', system-ui, sans-serif; --mono: 'JetBrains Mono Variable', ui-monospace, monospace;
+  }
+  body { background: var(--bg); color: var(--ink); font: 400 1rem/1.6 var(--sans); }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--sign); outline-offset: 3px; }
+</style>
+
+<style>
+  .wrap { max-width: 76rem; margin: 0 auto; padding-left: clamp(1rem, 3vw, 2rem); padding-right: clamp(1rem, 3vw, 2rem); }
+  .pict { display: inline-grid; place-items: center; width: 1.9rem; height: 1.9rem; border-radius: 4px; background: var(--ink); color: var(--sign); font: 800 1rem/1 var(--sans); flex: none; }
+  .pict.dep { transform: rotate(-30deg); border-radius: 50%; }
+  .pict.arr { transform: rotate(30deg) scaleX(-1); border-radius: 50%; }
+
+  .sign { position: sticky; top: 0; z-index: 10; display: flex; justify-content: space-between; align-items: center; gap: 1rem;
+    background: var(--sign); padding: .6rem clamp(1rem, 3vw, 2rem); box-shadow: 0 2px 0 rgb(0 0 0 / .08); }
+  .home { display: flex; align-items: center; gap: .6rem; font: 800 1.15rem var(--sans); text-decoration: none; letter-spacing: -.01em; }
+  .sign ul { display: flex; gap: 1.25rem; list-style: none; margin: 0; padding: 0; }
+  .sign li a { display: flex; align-items: center; gap: .45rem; font-weight: 700; font-size: .9rem; text-decoration: none; }
+  .sign li .pict { width: 1.5rem; height: 1.5rem; font-size: .8rem; }
+  .sign li a:hover { text-decoration: underline; text-underline-offset: 4px; }
+
+  .hero { max-width: 76rem; margin: 0 auto; padding: 2rem clamp(1rem, 3vw, 2rem) 2.5rem; display: grid; grid-template-columns: minmax(0, 1fr) 16rem; gap: 1.5rem; align-items: stretch; }
+  .board { background: var(--board); color: var(--flap); border-radius: 10px; padding: clamp(1rem, 3vw, 2rem); box-shadow: 0 20px 50px rgb(0 0 0 / .25), inset 0 0 0 1px #2c2d31; }
+  .board-label { font: 700 .72rem var(--sans); letter-spacing: .18em; color: var(--amber); margin: 0 0 1.25rem; }
+
+  .flaps { display: flex; flex-wrap: wrap; gap: .35em .6em; margin: 0; font-family: var(--mono); font-weight: 700; }
+  .flaps.xl { font-size: clamp(1.6rem, 5.4vw, 3.6rem); }
+  .flaps.sm { font-size: clamp(.8rem, 1.9vw, 1.2rem); margin-top: 1rem; color: var(--amber); }
+  .word { display: flex; gap: .08em; }
+  .f { position: relative; display: grid; place-items: center; width: .95em; height: 1.3em; background: var(--tile); border-radius: .1em; line-height: 1;
+    box-shadow: inset 0 -1px 0 rgb(0 0 0 / .6); }
+  .f::after { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: rgb(0 0 0 / .75); }
+  .f.flip { animation: flap .11s ease-in; }
+  @keyframes flap { from { transform: rotateX(70deg); filter: brightness(1.6); } }
+
+  .hero-row { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 1.5rem; margin-top: 2rem; padding-top: 1.25rem; border-top: 1px solid #2f3035; }
+  .facts { display: flex; flex-wrap: wrap; gap: 1rem 2.5rem; margin: 0; }
+  .facts dt { font: 700 .68rem var(--sans); letter-spacing: .14em; text-transform: uppercase; color: #9ba0aa; }
+  .facts dd { margin: 0; font: 600 1rem var(--mono); }
+  .ok { color: var(--ok); }
+  .blink { animation: blink 1.2s steps(1) infinite; }
+  @keyframes blink { 50% { opacity: .2; } }
+  .checkin { background: var(--sign); color: var(--ink); text-decoration: none; font-weight: 800; padding: .8rem 1.2rem; border-radius: 6px; }
+  .checkin:hover { background: #fff; }
+
+  .passport { background: #4a1420; color: #f1d9a7; border-radius: 12px; padding: 1.1rem; display: flex; flex-direction: column; gap: .75rem;
+    box-shadow: 0 20px 50px rgb(74 20 32 / .3); transform: rotate(1.5deg); }
+  .pp-head { font: 700 .6rem var(--sans); letter-spacing: .12em; margin: 0; }
+  .passport img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 4px; filter: sepia(.15); }
+  .passport dl { margin: 0; display: grid; gap: .35rem; }
+  .passport dt { font-size: .6rem; letter-spacing: .1em; text-transform: uppercase; opacity: .75; }
+  .passport dd { margin: 0; font: 600 .82rem var(--mono); color: #fff; }
+  .mrz { font: .6rem/1.5 var(--mono); margin: auto 0 0; opacity: .8; word-break: break-all; }
+
+  .ticker { background: #0b0b0c; color: var(--amber); overflow: hidden; padding: .7rem 0; border-block: 3px solid #222; }
+  .ticker p { display: flex; width: max-content; margin: 0; font: 700 .9rem var(--mono); letter-spacing: .08em; animation: ticker 45s linear infinite; text-shadow: 0 0 6px rgb(255 176 0 / .6); }
+  .ticker span { padding-right: 3rem; white-space: nowrap; }
+  @keyframes ticker { to { transform: translateX(-50%); } }
+
+  .sign-h { display: flex; align-items: center; flex-wrap: wrap; gap: .75rem; font: 800 clamp(1.4rem, 3vw, 2rem)/1.15 var(--sans); letter-spacing: -.02em; margin: 4rem 0 1.5rem; }
+  .sign-h small { font-size: .85rem; font-weight: 600; color: var(--muted); letter-spacing: 0; padding: .2rem .6rem; background: #fff; border-radius: 4px; }
+
+  .cols { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 2.5rem; }
+  .cols p { margin: 0 0 1rem; color: #2c3038; }
+  .kpis { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .75rem; align-content: start; }
+  /* stats as luggage tags: cut corners + punched hole, numbers as split-flap tiles */
+  .kpis { gap: 1.25rem 1rem; padding: .5rem; }
+  .kpis li { position: relative; display: flex; flex-direction: column; gap: .55rem; padding: .9rem 1rem 1rem 2.4rem; background: #fff;
+    clip-path: polygon(1.1rem 0, 100% 0, 100% 100%, 1.1rem 100%, 0 calc(100% - 1.1rem), 0 1.1rem);
+    transform: rotate(var(--r)); filter: drop-shadow(0 6px 10px rgb(0 0 0 / .08)); transition: transform .25s; }
+  .kpis li:hover { transform: rotate(0) translateY(-2px); }
+  .kpis li::before { content: ''; position: absolute; left: .75rem; top: 50%; width: .8rem; height: .8rem; margin-top: -.4rem; border-radius: 50%;
+    background: var(--bg); box-shadow: inset 0 0 0 3px #d9dce1; }
+  .tag-code { font: 700 .62rem var(--mono); letter-spacing: .14em; color: var(--muted); }
+  .kpis .flaps { font-size: 1.7rem; color: var(--flap); }
+  .tag-label { font-size: .8rem; line-height: 1.35; color: #3a3f48; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+
+  .gates { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: .75rem; }
+  .gates article { background: #fff; border-radius: 8px; padding: 1.1rem; display: flex; flex-direction: column; overflow: hidden; transition: transform .2s, box-shadow .2s; }
+  .gates article:hover { transform: translateY(-3px); box-shadow: 0 12px 24px rgb(0 0 0 / .08); }
+  /* gate sign as card header: black panel, yellow lettering, arrow nudges on hover */
+  .gate { display: flex; justify-content: space-between; align-items: center; margin: -1.1rem -1.1rem 1rem !important; padding: .7rem 1.1rem;
+    background: var(--ink); color: var(--sign) !important; font: 800 1.6rem/1 var(--sans) !important; }
+  .gate small { font-size: .62rem; letter-spacing: .16em; text-transform: uppercase; color: #fff; margin-right: .3rem; vertical-align: .35em; }
+  .gate span:last-child { transition: transform .2s; }
+  .gates article:hover .gate span:last-child { transform: translateX(4px); }
+  .gates h3 { font-size: 1rem; line-height: 1.25; margin: 0 0 .5rem; }
+  .gates p { margin: 0 0 .75rem; font-size: .88rem; color: #3a3f48; }
+  .via { margin-top: auto !important; font: 600 .72rem var(--mono) !important; color: var(--muted) !important; }
+
+  .thead, .rows summary, .rows.arr li { display: grid; grid-template-columns: 7.5rem 6rem minmax(0, 2.2fr) minmax(0, 1.4fr) 7rem; gap: 1rem; align-items: center; }
+  .arr-head, .rows.arr li { grid-template-columns: 4.5rem minmax(0, 1.6fr) minmax(0, 2fr) 7rem; }
+  .thead { font: 700 .68rem var(--sans); letter-spacing: .14em; text-transform: uppercase; color: var(--amber); padding: 0 .75rem .6rem; border-bottom: 1px solid #2f3035; }
+  .rows { list-style: none; margin: 0; padding: 0; font-family: var(--mono); }
+  .rows > li { border-bottom: 1px solid #26272b; }
+  .rows summary, .rows.arr li { padding: .8rem .75rem; cursor: pointer; list-style: none; }
+  .rows.arr li { cursor: default; }
+  .rows summary::-webkit-details-marker { display: none; }
+  .rows summary:hover, details[open] summary { background: #1f2024; }
+  .t, .fl { color: var(--amber); font-weight: 700; font-size: .9rem; }
+  .dest { font-weight: 700; color: #fff; letter-spacing: .02em; }
+  .dom { color: #a9adb6; font-size: .82rem; }
+  .st { font: 700 .72rem var(--sans); letter-spacing: .1em; text-transform: uppercase; color: var(--ok); text-align: right; }
+  .st.now { color: var(--sign); animation: blink 1.2s steps(1) infinite; }
+  .more { padding: 0 .75rem 1rem; margin-left: 14.5rem; color: #cfd2d8; font: .9rem/1.6 var(--sans); }
+  .more p { margin: 0 0 .4rem; }
+  .more a { color: var(--sign); }
+  .board-foot { font: .72rem var(--sans); color: #8b909a; margin: .75rem 0 0; }
+  @supports (animation-timeline: view()) {
+    .rows > li { animation: rowflip linear both; animation-timeline: view(); animation-range: entry 0% entry 60%; transform-origin: top; }
+    @keyframes rowflip { from { transform: perspective(600px) rotateX(-80deg); opacity: 0; } }
+  }
+
+  .stamps { list-style: none; margin: 0; padding: 1rem 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(12.5rem, 1fr)); gap: 1.5rem 1.25rem; }
+  .stamps li { color: var(--c); border: 3px double var(--c); border-radius: 14px; padding: .9rem 1rem; transform: rotate(var(--r)); display: flex; flex-direction: column; gap: .15rem;
+    background: rgb(255 255 255 / .55); transition: transform .2s; }
+  .stamps li:hover { transform: rotate(0) scale(1.03); }
+  .sd { font: 800 .75rem var(--mono); letter-spacing: .1em; }
+  .stamps strong { font-size: .95rem; line-height: 1.25; text-transform: uppercase; letter-spacing: .02em; }
+  .stamps li span:last-child { font-size: .75rem; opacity: .85; }
+  .langs { display: flex; flex-wrap: wrap; gap: .5rem 1.5rem; font-size: .9rem; color: var(--muted); margin: 1rem 0 0; }
+  .langs strong { color: var(--ink); }
+
+  .pass { display: grid; grid-template-columns: minmax(0, 1fr) 11rem; background: #fff; border-radius: 16px; overflow: hidden; box-shadow: 0 20px 50px rgb(0 0 0 / .12); }
+  .pass-main { padding: clamp(1.25rem, 3vw, 2rem); }
+  .airline { font: 800 .72rem var(--sans); letter-spacing: .16em; margin: 0 0 1.5rem; color: #fff; background: var(--ink); display: inline-block; padding: .35rem .7rem; border-radius: 4px; }
+  .route { display: flex; align-items: center; gap: 1.5rem; margin-bottom: 1.5rem; }
+  .route div { display: flex; flex-direction: column; }
+  .route span { font-size: .7rem; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+  .route strong { font: 800 clamp(2.4rem, 7vw, 3.6rem)/1 var(--sans); letter-spacing: -.03em; }
+  .route small { color: var(--muted); }
+  .plane { font-size: 1.8rem; flex: 1; text-align: center; border-bottom: 2px dashed #c9ccd2; line-height: 1; padding-bottom: .4rem; }
+  .pass-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; margin: 0 0 1.5rem; }
+  .pass-grid dt { font-size: .68rem; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+  .pass-grid dd { margin: 0; font: 700 1rem var(--mono); }
+  .pass-cta { display: flex; flex-wrap: wrap; gap: .6rem; margin: 0; }
+  .btn { background: var(--sign); text-decoration: none; font-weight: 700; padding: .75rem 1.1rem; border-radius: 6px; overflow-wrap: anywhere; }
+  .btn.ghost { background: transparent; border: 2px solid var(--ink); padding: calc(.75rem - 2px) 1rem; }
+  .btn:hover { background: var(--ink); color: var(--sign); }
+  .stub { background: var(--sign); border-left: 3px dashed var(--bg); padding: 1.5rem 1rem; display: flex; flex-direction: column; align-items: center; justify-content: space-between; text-align: center; font: 700 .9rem var(--mono); }
+  .stub p { margin: 0; }
+  .seat { font: 800 2.5rem/1 var(--sans) !important; }
+  .barcode { width: 100%; height: 4.5rem; background: repeating-linear-gradient(90deg, var(--ink) 0 2px, transparent 2px 4px, var(--ink) 4px 7px, transparent 7px 8px, var(--ink) 8px 9px, transparent 9px 12px); }
+
+  .foot { display: flex; flex-wrap: wrap; gap: .5rem 1.5rem; padding-top: 3rem; padding-bottom: 4rem; font-size: .85rem; color: var(--muted); }
+
+  @media (max-width: 1000px) {
+    .sign nav { display: none; }
+    .hero { grid-template-columns: minmax(0, 1fr); }
+    .passport { flex-direction: row; flex-wrap: wrap; transform: none; }
+    .passport img { width: 7rem; }
+    .passport dl { flex: 1; min-width: 10rem; }
+    .pp-head, .mrz { flex-basis: 100%; }
+    .cols { grid-template-columns: minmax(0, 1fr); }
+    .gates { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .thead { display: none; }
+    .rows summary, .rows.arr li, .arr-head { grid-template-columns: 5.5rem minmax(0, 1fr); gap: .1rem 1rem; }
+    .rows summary .fl, .rows .st { display: none; }
+    .rows .dom { grid-column: 2; }
+    .more { margin-left: 0; }
+  }
+  @media (max-width: 560px) {
+    .gates { grid-template-columns: minmax(0, 1fr); }
+    .pass { grid-template-columns: minmax(0, 1fr); }
+    .stub { border-left: 0; border-top: 3px dashed var(--bg); flex-direction: row; }
+    .barcode { width: 6rem; height: 2.5rem; }
+    .pass-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .route { gap: .75rem; }
+  }
+</style>

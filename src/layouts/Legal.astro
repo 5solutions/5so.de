@@ -1,0 +1,26 @@
+---
+import '@fontsource-variable/inter';
+import Base from './Base.astro';
+interface Props { title: string }
+const { title } = Astro.props;
+---
+<Base title={`${title} – Stefan Sobek`} description={`${title} von 5so.de`}>
+  <main id="main" class="legal">
+    <a href="/" class="back">← Zurück zur Startseite</a>
+    <h1>{title}</h1>
+    <slot />
+  </main>
+</Base>
+
+<style is:global>
+  :root { color-scheme: light dark; --bg: #fbfaf8; --fg: #1c1c21; --muted: #5b5b66; --line: #e3e0da; --accent: #1f2b8f; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #111216; --fg: #ececf1; --muted: #a2a2ae; --line: #2a2b33; --accent: #9fb0ff; } }
+  body { background: var(--bg); color: var(--fg); font: 400 1rem/1.65 'Inter Variable', system-ui, sans-serif; }
+  .legal { max-width: 46rem; margin: 0 auto; padding: 3rem 1.25rem 5rem; }
+  .legal h1 { font-size: clamp(2rem, 5vw, 2.75rem); letter-spacing: -.02em; line-height: 1.1; margin: 1.5rem 0 2rem; }
+  .legal h2 { font-size: 1.15rem; margin: 2.25rem 0 .5rem; }
+  .legal p, .legal li { color: var(--muted); }
+  .legal a { color: var(--accent); }
+  .legal .back { text-decoration: none; font-size: .9rem; }
+  .legal address { font-style: normal; color: var(--fg); }
+</style>

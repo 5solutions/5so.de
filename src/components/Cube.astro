@@ -1,0 +1,44 @@
+---
+// Isometric 3×3 puzzle cube as inline SVG. Faces: top, right, left (9 stickers each, row by row).
+// With `from`, every sticker animates from the scrambled colour to its solved colour (see .solve in the page CSS).
+interface Props {
+  faces: string[]; // 27 colours: top[9], right[9], left[9]
+  from?: string[]; // 27 scrambled colours for the animation
+  label?: string;
+  class?: string;
+}
+const { faces, from, label, class: cls } = Astro.props;
+
+const iso = ([x, y, z]: number[]) => `${((x - y) * 0.866).toFixed(3)},${((x + y) * 0.5 - z).toFixed(3)}`;
+const inset = 0.1;
+// 3D corners of sticker (u,v) on each visible face, shrunk toward the sticker centre
+const cell = (face: number, u: number, v: number) => {
+  const a = u + inset, b = u + 1 - inset, c = 2 - v + inset, d = 3 - v - inset;
+  const corners =
+    face === 0 ? [[a, v + inset, 3], [b, v + inset, 3], [b, v + 1 - inset, 3], [a, v + 1 - inset, 3]]
+    : face === 1 ? [[3, a, d], [3, b, d], [3, b, c], [3, a, c]]
+    : [[a, 3, d], [b, 3, d], [b, 3, c], [a, 3, c]];
+  return corners.map(iso).join(' ');
+};
+const body = [[0, 0, 3], [3, 0, 3], [3, 0, 0], [3, 3, 0], [0, 3, 0], [0, 3, 3]].map(iso).join(' ');
+const shade = ['', 'brightness(.72)', 'brightness(.86)'];
+---
+<svg class:list={['cube', cls]} viewBox="-2.85 -3.2 5.7 6.4" role={label ? 'img' : undefined} aria-label={label} aria-hidden={label ? undefined : 'true'}>
+  <polygon points={body} fill="#16161a" stroke="#16161a" stroke-width=".25" stroke-linejoin="round" />
+  {[0, 1, 2].map((f) => (
+    <g style={shade[f] ? `filter:${shade[f]}` : undefined}>
+      {Array.from({ length: 9 }, (_, i) => {
+        const k = f * 9 + i;
+        return (
+          <polygon
+            points={cell(f, i % 3, Math.floor(i / 3))}
+            fill={faces[k]}
+            stroke-linejoin="round"
+            class={from ? 'solve' : undefined}
+            style={from ? `--a:${from[k]};--b:${faces[k]};animation-delay:${((k * 37) % 27) * 0.06}s` : undefined}
+          />
+        );
+      })}
+    </g>
+  ))}
+</svg>

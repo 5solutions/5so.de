@@ -1,0 +1,204 @@
+---
+// Design "Würfel": minimal, viel Luft (inspiriert von pixelwrld.co). Leistungen als Zauberwürfel, Hero-Würfel löst sich selbst.
+import '@fontsource-variable/inter';
+import '@fontsource-variable/fraunces/soft-italic.css';
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Cube from '../components/Cube.astro';
+import photo from '../assets/stefan-sobek.jpg';
+import { person, quote, about, stats, focus, experience, projects, certifications, education, languages } from '../data/profile';
+
+const C = { w: '#f2f2ee', y: '#ffd400', r: '#e5322d', o: '#ff7a00', b: '#1e5bd8', g: '#14a44d' };
+const pal = Object.values(C);
+const nine = (c: string) => Array(9).fill(c);
+// Hero: solved state (blue/yellow/red) and a deterministic scramble to animate from
+const solved = [...nine(C.b), ...nine(C.y), ...nine(C.r)];
+const scrambled = solved.map((_, k) => pal[(k * 5 + 3) % 6]);
+// One cube per service: own colour on top, sides "almost solved"
+const main = [C.b, C.g, C.r, C.o, C.y];
+const focusCube = (i: number) => [
+  ...nine(main[i]),
+  ...Array.from({ length: 18 }, (_, k) => ((k * 7 + i * 3) % 4 === 0 ? pal[(k + i) % 6] : k < 9 ? C.w : main[(i + 2) % 5])),
+];
+const short = ['Projekte', 'Agile', 'Kunden', 'Lehre', 'Architektur'];
+const slug = (s: string) => s.toLowerCase().replace(/[^a-zäöüß]+/g, '-').replace(/^-|-$/g, '');
+---
+<Base design="wuerfel">
+  <main id="main">
+    <section class="hero" aria-labelledby="h-hero">
+      <p class="hello">Willkommen in meiner<br />Ecke des Internets :)</p>
+      <Cube faces={solved} from={scrambled} class="big" label="Zauberwürfel, der sich selbst löst" />
+      <h1 id="h-hero">{person.name}</h1>
+      <p class="role">{person.role} · {person.location}</p>
+    </section>
+
+    <nav class="dock" aria-label="Leistungen">
+      <ul>
+        {focus.map((f, i) => (
+          <li>
+            <a href={`#${slug(f.title)}`}>
+              <Cube faces={focusCube(i)} />
+              <span>{short[i]}</span>
+            </a>
+          </li>
+        ))}
+        <li>
+          <a href="#kontakt">
+            <Image src={photo} alt="" width={120} height={120} class="me" />
+            <span>Mit Stefan arbeiten</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <section class="intro narrow" aria-label="Kurzvorstellung">
+      <p>Hey! Ich bin Stefan – {person.headline.charAt(0).toLowerCase() + person.headline.slice(1)} {person.lead}</p>
+    </section>
+
+    <figure class="quote narrow">
+      <blockquote>„{quote.text}“</blockquote>
+      <figcaption>{quote.author} – und der Grund, warum es hier fünf Würfel gibt.</figcaption>
+    </figure>
+
+    <section id="schwerpunkte" class="narrow" aria-labelledby="h-fokus">
+      <h2 id="h-fokus" class="hand">Fünf Wege</h2>
+      {focus.map((f, i) => (
+        <article id={slug(f.title)} class="service">
+          <Cube faces={focusCube(i)} />
+          <div>
+            <h3>{f.title}</h3>
+            <p>{f.text}</p>
+            <ul class="pills">{f.tags.map((t) => <li>{t}</li>)}</ul>
+          </div>
+        </article>
+      ))}
+    </section>
+
+    <section id="ueber" class="narrow" aria-labelledby="h-ueber">
+      <h2 id="h-ueber" class="hand">Über mich</h2>
+      {about.map((p) => <p class="body">{p}</p>)}
+      <dl class="stats">
+        {stats.map((s) => <div><dt>{s.label}</dt><dd>{s.value}</dd></div>)}
+      </dl>
+    </section>
+
+    <section id="projekte" class="narrow" aria-labelledby="h-projekte">
+      <h2 id="h-projekte" class="hand">Projekte</h2>
+      <ul class="rows">
+        {projects.map((p) => (
+          <li>
+            <span class="yr">{p.years}</span>
+            <div>
+              <h3>{p.link ? <a href={p.link}>{p.title} ↗</a> : p.title}</h3>
+              <p class="sub">{p.role} · {p.domain}</p>
+              <p>{p.text}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section id="werdegang" class="narrow" aria-labelledby="h-werdegang">
+      <h2 id="h-werdegang" class="hand">Werdegang</h2>
+      <ul class="rows compact">
+        {experience.map((e) => <li><span class="yr">{e.from.slice(-4)}–{e.to === 'heute' ? 'heute' : e.to.slice(-4)}</span><div><h3>{e.company}</h3><p>{e.role}</p></div></li>)}
+        {education.map((e) => <li><span class="yr">{e.from}–{e.to}</span><div><h3>{e.title}</h3><p>{e.place}</p></div></li>)}
+      </ul>
+      <h3 class="mini">Zertifizierungen</h3>
+      <ul class="pills big">{certifications.map((c) => <li title={`${c.issuer} · ${c.date}`}>{c.name}</li>)}</ul>
+      <h3 class="mini">Sprachen</h3>
+      <ul class="pills big">{languages.map((l) => <li>{l.name} · {l.level}</li>)}</ul>
+    </section>
+
+    <section id="kontakt" class="narrow contact" aria-labelledby="h-kontakt">
+      <h2 id="h-kontakt" class="hand">Lass uns reden :)</h2>
+      <ul class="pills big links">
+        <li><a href={`mailto:${person.email}`}>{person.email}</a></li>
+        <li><a href={person.linkedin}>LinkedIn</a></li>
+        <li><a href={person.github}>GitHub</a></li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <span class="dots" aria-hidden="true">•••</span>
+    <p>© {new Date().getFullYear()} {person.name} · <a href="/impressum/">Impressum</a> · <a href="/datenschutz/">Datenschutz</a></p>
+  </footer>
+</Base>
+
+<style is:global>
+  :root { color-scheme: light; --bg: #f6f6f5; --fg: #1d1d20; --muted: #6b6b72; --pill: #e9e9e7; --hand: 'Fraunces Variable', Georgia, serif; }
+  body { background: var(--bg); color: var(--fg); font: 400 1rem/1.65 'Inter Variable', system-ui, sans-serif; }
+  a { color: inherit; }
+  :focus-visible { outline: 2px solid #1e5bd8; outline-offset: 4px; border-radius: 8px; }
+  .solve { animation: solve 9s ease-in-out infinite; }
+  @keyframes solve { 0%, 12% { fill: var(--a); } 45%, 88% { fill: var(--b); } 100% { fill: var(--a); } }
+</style>
+
+<style>
+  main { padding: 0 1rem; }
+  .narrow { max-width: 38rem; margin: 0 auto; padding: 5rem 0 0; }
+  .hand, .hello { font-family: var(--hand); font-style: italic; font-variation-settings: 'SOFT' 100, 'WONK' 1; font-weight: 500; }
+
+  .hero { min-height: min(84vh, 50rem); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding-top: 3rem; }
+  .hello { font-size: clamp(1.7rem, 4.5vw, 2.6rem); line-height: 1.1; color: #4a4a50; transform: rotate(-3deg); margin: 0 0 2.5rem; }
+  .hero :global(.big) { width: min(15rem, 55vw); animation: float 6s ease-in-out infinite; filter: drop-shadow(0 22px 22px rgb(0 0 0 / .14)); }
+  @keyframes float { 50% { transform: translateY(-10px) rotate(2deg); } }
+  h1 { font: 600 1.15rem/1.3 'Inter Variable', sans-serif; margin: 2.5rem 0 .2rem; letter-spacing: -.01em; }
+  .role { color: var(--muted); margin: 0; font-size: .95rem; }
+
+  .dock ul { list-style: none; margin: 0 auto; padding: 0 0 2rem; max-width: 62rem; display: flex; flex-wrap: wrap; justify-content: center; gap: 2rem 1.5rem; }
+  .dock a { display: flex; flex-direction: column; align-items: center; gap: .9rem; text-decoration: none; width: 8.5rem; }
+  .dock :global(.cube), .dock .me { width: 5.5rem; height: 5.5rem; transition: transform .25s cubic-bezier(.3, 1.6, .5, 1); }
+  .dock .me { border-radius: 50%; object-fit: cover; background: #e2e2e0; }
+  .dock a:hover :global(.cube), .dock a:hover .me, .dock a:focus-visible :global(.cube) { transform: translateY(-6px) scale(1.06) rotate(-4deg); }
+  .dock span, .pills li { background: var(--pill); border-radius: 999px; padding: .4rem .9rem; font-size: .85rem; font-weight: 500; white-space: nowrap; }
+
+  .intro p { text-align: center; color: #55555c; font-size: 1.05rem; margin: 0; }
+  .quote { text-align: center; margin: 0 auto; }
+  .quote blockquote { margin: 0; font: italic 500 clamp(1.3rem, 3vw, 1.7rem)/1.35 var(--hand); font-variation-settings: 'SOFT' 100; }
+  .quote figcaption { color: var(--muted); font-size: .85rem; margin-top: 1rem; }
+
+  h2.hand { font-size: 2rem; margin: 0 0 2rem; text-align: center; transform: rotate(-2deg); color: #3a3a40; }
+  h3 { font-size: 1.05rem; line-height: 1.35; margin: 0 0 .3rem; font-weight: 600; }
+  .service { display: grid; grid-template-columns: 4.5rem minmax(0, 1fr); gap: 1.5rem; padding: 1.5rem 0; scroll-margin-top: 2rem; }
+  .service :global(.cube) { width: 4.5rem; }
+  .service p, .body, .rows p { color: #55555c; margin: 0 0 .8rem; }
+  .pills { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: .4rem; }
+  .pills li { font-size: .75rem; padding: .25rem .7rem; }
+  .pills.big li { font-size: .85rem; padding: .4rem .9rem; white-space: normal; }
+
+  .stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; margin: 2.5rem 0 0; text-align: center; }
+  .stats div { display: flex; flex-direction: column-reverse; }
+  .stats dd { margin: 0; font: italic 600 2.2rem/1 var(--hand); }
+  .stats dt { color: var(--muted); font-size: .78rem; margin-top: .4rem; }
+
+  .rows { list-style: none; padding: 0; margin: 0; }
+  .rows li { display: grid; grid-template-columns: 6.5rem minmax(0, 1fr); gap: 1rem; padding: 1.1rem 0; border-top: 1px solid #e4e4e1; }
+  .rows .sub { font-size: .82rem; color: var(--muted); margin-bottom: .4rem; }
+  .rows.compact p { margin: 0; font-size: .9rem; }
+  .yr { font-size: .82rem; color: var(--muted); font-variant-numeric: tabular-nums; padding-top: .15rem; }
+  .rows a { text-decoration: none; }
+  .rows a:hover { text-decoration: underline; }
+  .mini { margin: 2.5rem 0 .8rem; font-size: .8rem; text-transform: uppercase; letter-spacing: .12em; color: var(--muted); }
+
+  .contact { text-align: center; padding-bottom: 3rem; }
+  .links { justify-content: center; }
+  .links li { padding: 0; }
+  .links a { display: block; padding: .55rem 1.1rem; text-decoration: none; border-radius: 999px; transition: background .2s; }
+  .links a:hover { background: #dcdcd9; }
+
+  .foot { text-align: center; padding: 3rem 1rem 5rem; color: var(--muted); font-size: .8rem; }
+  .dots { display: inline-block; background: var(--pill); border-radius: 999px; padding: .1rem 1rem; letter-spacing: .3em; color: #9a9aa0; }
+
+  @media (max-width: 560px) {
+    .dock ul { gap: 1.5rem .5rem; }
+    .dock a { width: 6.5rem; }
+    .dock :global(.cube), .dock .me { width: 4.25rem; height: 4.25rem; }
+    .dock span { font-size: .75rem; white-space: normal; text-align: center; }
+    .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 1.75rem; }
+    .service { grid-template-columns: 3rem minmax(0, 1fr); gap: 1rem; }
+    .service :global(.cube) { width: 3rem; }
+    .rows li { grid-template-columns: minmax(0, 1fr); gap: .2rem; }
+  }
+</style>

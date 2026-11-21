@@ -1,0 +1,279 @@
+---
+// Design "C64": Retro-Bootscreen, Pixelschrift, Ladestreifen – aber modernes, responsives Kachel-Layout und gut lesbarer Fließtext.
+import '@fontsource/press-start-2p';
+import '@fontsource-variable/jetbrains-mono';
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import photo from '../assets/stefan-sobek.jpg';
+import logo from '../assets/logo.png';
+import { person, quote, about, stats, focus, experience, projects, certifications, education, languages, nav } from '../data/profile';
+
+const accents = ['var(--cyan)', 'var(--green)', 'var(--yellow)', 'var(--red)', 'var(--purple)'];
+const up = (s: string) => s.toUpperCase();
+---
+<Base design="c64">
+  <div class="screen">
+    <header class="top">
+      <a href="#main" class="brand"><Image src={logo} alt="" width={56} height={23} /> 5SO.DE</a>
+      <nav aria-label="Abschnitte"><ul>{nav.map((n, i) => <li><a href={n.href}><span aria-hidden="true">F{i + 1}</span> {n.label}</a></li>)}</ul></nav>
+    </header>
+
+    <main id="main">
+      <section class="boot" aria-labelledby="h-hero">
+        <div class="boot-text">
+          <p class="center">**** 5SO.DE PERSONAL SYSTEM V2 ****</p>
+          <p class="center">{stats[0].value} JAHRE ERFAHRUNG · {stats[1].value} ZERTIFIKATE · 38911 IDEEN FREI</p>
+          <p>READY.</p>
+          <p class="typed"><span>LOAD "STEFAN",8,1</span></p>
+          <p class="late l1">SEARCHING FOR STEFAN</p>
+          <p class="late l2">LOADING</p>
+          <p class="late l3">READY.<span class="cursor" aria-hidden="true"></span></p>
+        </div>
+        <div class="hero">
+          <div class="sprite">
+            <Image src={photo} alt="" width={72} class="lo" />
+            <Image src={photo} alt="Porträt von Stefan Sobek" widths={[300, 600]} sizes="300px" class="hi" />
+            <span class="tag">SPRITE #0 · HOVER = HI-RES</span>
+          </div>
+          <div>
+            <h1 id="h-hero">{person.name}</h1>
+            <p class="role">{person.role}</p>
+            <p class="headline">{person.headline}</p>
+            <p class="lead">{person.lead}</p>
+            <div class="cta">
+              <a class="btn primary" href={`mailto:${person.email}`}>RUN KONTAKT</a>
+              <a class="btn" href={person.linkedin}>LINKEDIN ↗</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="stripes" aria-hidden="true"></div>
+
+      <section class="stats" aria-label="Kennzahlen">
+        {stats.map((s, i) => <div class="px" style={`--c:${accents[i]}`}><span class="num">{s.value}</span><span>{s.label}</span></div>)}
+      </section>
+
+      <section id="ueber" class="block" aria-labelledby="h-ueber">
+        <h2 id="h-ueber"><span class="ln">10</span> REM ÜBER MICH</h2>
+        <div class="two">
+          <div>{about.map((p) => <p>{p}</p>)}</div>
+          <figure class="px quote">
+            <blockquote>„{quote.text}“</blockquote>
+            <figcaption>— {up(quote.author)}</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section id="schwerpunkte" class="block" aria-labelledby="h-fokus">
+        <h2 id="h-fokus"><span class="ln">20</span> FOR I=1 TO 5: SCHWERPUNKTE</h2>
+        <div class="focus">
+          {focus.map((f, i) => (
+            <article class="px card" style={`--c:${accents[i]}`}>
+              <span class="idx">I={i + 1}</span>
+              <h3>{f.title}</h3>
+              <p>{f.text}</p>
+              <ul class="chips">{f.tags.map((t) => <li>{t}</li>)}</ul>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section id="projekte" class="block" aria-labelledby="h-projekte">
+        <h2 id="h-projekte"><span class="ln">30</span> GOSUB PROJEKTE</h2>
+        <div class="projects">
+          {projects.map((p, i) => (
+            <article class="px card" style={`--c:${accents[i % 5]}`}>
+              <p class="meta"><span>{p.years}</span><span>{p.domain}</span></p>
+              <h3>{p.link ? <a href={p.link}>{p.title} ↗</a> : p.title}</h3>
+              <p class="prole">{p.role}</p>
+              <p>{p.text}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section id="werdegang" class="block" aria-labelledby="h-werdegang">
+        <h2 id="h-werdegang"><span class="ln">40</span> LOAD "$",8</h2>
+        <div class="two">
+          <div class="dir px">
+            <p class="dirhead"><span>0</span> <span class="inv">"WERDEGANG       " 5S 2A</span></p>
+            <ol>
+              {experience.map((e) => (
+                <li><span class="blk">{e.from.slice(-4)}</span><span><strong>"{up(e.company)}"</strong><small>{e.role} · {e.from} – {e.to}</small></span><span class="prg">PRG</span></li>
+              ))}
+              {education.map((e) => (
+                <li><span class="blk">{e.from}</span><span><strong>"{up(e.title)}"</strong><small>{e.place} · {e.note}</small></span><span class="prg">SEQ</span></li>
+              ))}
+            </ol>
+            <p class="dirfoot">{experience.length + education.length} FILES. READY.</p>
+          </div>
+          <div class="side">
+            <div class="px card" style="--c:var(--yellow)">
+              <h3 class="label">ZERTIFIZIERUNGEN</h3>
+              <ul class="list">{certifications.map((c) => <li><strong>{c.name}</strong><small>{c.issuer} · {c.date}</small></li>)}</ul>
+            </div>
+            <div class="px card" style="--c:var(--green)">
+              <h3 class="label">SPRACHEN</h3>
+              <ul class="list">{languages.map((l) => <li><strong>{l.name}</strong><small>{l.level}</small></li>)}</ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="kontakt" class="block contact" aria-labelledby="h-kontakt">
+        <h2 id="h-kontakt"><span class="ln">50</span> PRINT "LUST AUF EIN GESPRÄCH?"</h2>
+        <p>Projekte, Vorträge, Trainings – oder einfach Austausch über gute Zusammenarbeit.</p>
+        <div class="cta">
+          <a class="btn primary" href={`mailto:${person.email}`}>{person.email}</a>
+          <a class="btn" href={person.linkedin}>LINKEDIN ↗</a>
+          <a class="btn" href={person.github}>GITHUB ↗</a>
+        </div>
+        <p class="ready">READY.<span class="cursor" aria-hidden="true"></span></p>
+      </section>
+    </main>
+
+    <footer class="foot">
+      <span>© {new Date().getFullYear()} {up(person.name)}</span>
+      <a href="/impressum/">IMPRESSUM</a>
+      <a href="/datenschutz/">DATENSCHUTZ</a>
+    </footer>
+  </div>
+</Base>
+
+<style is:global>
+  :root {
+    color-scheme: dark;
+    /* C64 palette, brightened where needed for WCAG contrast on the blue screen */
+    --border: #6c5eb5; --bg: #352879; --bg2: #2c2068; --fg: #d4ceff; --dim: #a69cf0;
+    --cyan: #8fdde9; --green: #a8e890; --yellow: #eef59a; --red: #ff9d8c; --purple: #dba4f5;
+    --px: 'Press Start 2P', monospace; --mono: 'JetBrains Mono Variable', ui-monospace, monospace;
+  }
+  body { background: var(--border); color: var(--fg); font: 400 1rem/1.65 var(--mono); }
+  a { color: inherit; }
+  ::selection { background: var(--fg); color: var(--bg); }
+  :focus-visible { outline: 3px solid var(--yellow); outline-offset: 3px; }
+</style>
+
+<style>
+  .screen { max-width: 76rem; margin: clamp(.75rem, 3vw, 2.5rem) auto; background: var(--bg); position: relative; overflow: hidden;
+    box-shadow: 0 0 0 4px var(--bg2), 0 30px 80px rgb(20 10 60 / .5); border-radius: 6px; }
+  /* subtle scanlines */
+  .screen::after { content: ''; position: absolute; inset: 0; pointer-events: none;
+    background: repeating-linear-gradient(0deg, rgb(0 0 0 / .09) 0 1px, transparent 1px 3px); }
+
+  .top { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 1rem clamp(1rem, 3vw, 2rem); border-bottom: 4px solid var(--bg2); }
+  .brand { display: flex; align-items: center; gap: .7rem; font: .8rem var(--px); text-decoration: none; }
+  .brand img { image-rendering: pixelated; filter: brightness(0) invert(.85) sepia(1) hue-rotate(200deg) saturate(3); }
+  .top ul { display: flex; gap: 1rem; list-style: none; margin: 0; padding: 0; }
+  .top li a { font: .55rem/1 var(--px); text-decoration: none; color: var(--dim); text-transform: uppercase; }
+  .top li a span { background: var(--dim); color: var(--bg); padding: .15rem .25rem; }
+  .top li a:hover { color: var(--fg); }
+
+  main { padding: 0 clamp(1rem, 3vw, 2rem); }
+  .boot { padding: 2rem 0 3rem; }
+  .boot-text p { font: clamp(.55rem, 1.4vw, .8rem)/1.9 var(--px); margin: 0; text-transform: uppercase; }
+  .boot-text .center { text-align: center; }
+  .boot-text .center + .center { margin-bottom: 1.5rem; }
+  .typed span { display: inline-block; overflow: hidden; white-space: nowrap; vertical-align: bottom; width: 17ch; animation: type 1.4s steps(17) .4s backwards; }
+  @keyframes type { from { width: 0; } }
+  .late { animation: appear .01s backwards; }
+  .l1 { animation-delay: 2s; } .l2 { animation-delay: 2.8s; } .l3 { animation-delay: 3.6s; }
+  @keyframes appear { from { visibility: hidden; } }
+  .cursor { display: inline-block; width: 1ch; height: 1em; background: var(--fg); vertical-align: -.1em; margin-left: .2ch; animation: blink 1s steps(1) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  .hero { display: grid; grid-template-columns: 18rem minmax(0, 1fr); gap: clamp(1.5rem, 4vw, 3.5rem); align-items: center; margin-top: 2.5rem; }
+  .sprite { position: relative; aspect-ratio: 1; border: 4px solid var(--fg); background: var(--bg2); }
+  .sprite img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .sprite .lo { image-rendering: pixelated; filter: contrast(1.15) saturate(.7); }
+  .sprite .hi { opacity: 0; transition: opacity .3s steps(4); }
+  .sprite:hover .hi { opacity: 1; }
+  .tag { position: absolute; left: -4px; bottom: -1.9rem; font: .45rem var(--px); color: var(--dim); }
+  h1 { font: clamp(1.6rem, 5vw, 3.2rem)/1.15 var(--px); margin: 0; color: #fff; text-shadow: 4px 4px 0 var(--bg2); text-transform: uppercase; }
+  .role { font: clamp(.55rem, 1.3vw, .75rem)/1.6 var(--px); color: var(--cyan); margin: 1rem 0 0; text-transform: uppercase; }
+  .headline { font-size: clamp(1.2rem, 2.5vw, 1.5rem); font-weight: 700; line-height: 1.3; margin: 1.75rem 0 .5rem; color: #fff; }
+  .lead { color: var(--fg); max-width: 36rem; margin: 0 0 1.75rem; }
+  .cta { display: flex; flex-wrap: wrap; gap: .75rem; }
+  .btn { font: .62rem/1 var(--px); text-decoration: none; padding: .95rem 1.1rem; border: 3px solid var(--fg); text-transform: uppercase; transition: none; }
+  .btn:hover { background: var(--fg); color: var(--bg); }
+  .btn.primary { background: var(--yellow); color: var(--bg); border-color: var(--yellow); box-shadow: 4px 4px 0 var(--bg2); }
+  .btn.primary:hover { background: #fff; border-color: #fff; }
+
+  /* cassette loading stripes */
+  .stripes { height: 1.25rem; margin: 0 calc(-1 * clamp(1rem, 3vw, 2rem)); animation: load .35s steps(4) infinite;
+    background: repeating-linear-gradient(180deg, var(--red) 0 3px, var(--cyan) 3px 5px, var(--yellow) 5px 9px, var(--purple) 9px 11px, var(--green) 11px 14px) 0 0 / 100% 14px; }
+  @keyframes load { to { background-position: 0 14px; } }
+
+  /* pixel-cornered panels */
+  .px { position: relative; background: var(--bg2); border: 4px solid var(--c, var(--dim));
+    clip-path: polygon(0 8px, 8px 8px, 8px 0, calc(100% - 8px) 0, calc(100% - 8px) 8px, 100% 8px, 100% calc(100% - 8px), calc(100% - 8px) calc(100% - 8px), calc(100% - 8px) 100%, 8px 100%, 8px calc(100% - 8px), 0 calc(100% - 8px)); }
+
+  .stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; margin: 3rem 0 0; }
+  .stats div { display: flex; flex-direction: column; gap: .6rem; padding: 1.25rem; }
+  .num { font: 1.8rem/1 var(--px); color: var(--c); }
+  .stats span:last-child { font-size: .85rem; color: var(--fg); }
+
+  .block { padding: 4rem 0 0; }
+  h2 { font: clamp(.7rem, 1.8vw, 1rem)/1.6 var(--px); margin: 0 0 1.75rem; color: #fff; text-transform: uppercase; }
+  .ln { color: var(--dim); margin-right: .6rem; }
+  h3 { font-size: 1.05rem; line-height: 1.35; margin: 0 0 .5rem; color: #fff; }
+  .two { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 2rem; align-items: start; }
+  .two p { margin: 0 0 1rem; }
+  .quote { margin: 0; padding: 1.5rem; --c: var(--cyan); }
+  .quote blockquote { margin: 0; font-size: 1.15rem; line-height: 1.5; color: #fff; font-weight: 600; }
+  .quote figcaption { font: .55rem var(--px); color: var(--cyan); margin-top: 1.25rem; }
+
+  .card { padding: 1.4rem; display: flex; flex-direction: column; }
+  .card p { margin: 0 0 1rem; color: var(--fg); font-size: .92rem; }
+  .focus { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 1rem; }
+  .focus article { grid-column: span 2; }
+  .focus article:nth-child(4), .focus article:nth-child(5) { grid-column: span 3; }
+  .card:hover { background: color-mix(in srgb, var(--c) 14%, var(--bg2)); }
+  .idx { font: .6rem var(--px); color: var(--c); margin-bottom: 1.1rem; }
+  .chips { list-style: none; padding: 0; margin: auto 0 0; display: flex; flex-wrap: wrap; gap: .4rem; }
+  .chips li { font-size: .72rem; padding: .1rem .5rem; background: var(--c); color: var(--bg); font-weight: 700; }
+
+  .projects { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+  .meta { display: flex; justify-content: space-between; gap: 1rem; font-size: .72rem !important; color: var(--dim) !important; }
+  .meta span:first-child { font: .55rem/1.6 var(--px); color: var(--c); white-space: nowrap; }
+  .prole { color: var(--c) !important; font-size: .82rem !important; margin-bottom: .6rem !important; }
+  .card h3 a { text-decoration: none; }
+  .card h3 a:hover { background: var(--c); color: var(--bg); }
+
+  .dir { padding: 1.25rem; --c: var(--fg); }
+  .dirhead, .dirfoot { font: .6rem/1.6 var(--px); margin: 0 0 1rem; }
+  .inv { background: var(--fg); color: var(--bg); padding: .1rem .3rem; }
+  .dirfoot { margin: 1rem 0 0; color: var(--dim); }
+  .dir ol { list-style: none; margin: 0; padding: 0; display: grid; gap: .8rem; }
+  .dir li { display: grid; grid-template-columns: 3.2rem minmax(0, 1fr) 2.2rem; gap: .75rem; }
+  .blk, .prg { font: .55rem/2 var(--px); color: var(--dim); }
+  .dir strong { display: block; color: #fff; font-size: .9rem; }
+  .dir small, .list small { display: block; color: var(--dim); font-size: .8rem; line-height: 1.45; }
+  .side { display: grid; gap: 1rem; }
+  .label { font: .6rem var(--px); color: var(--c); margin-bottom: 1rem; }
+  .list { list-style: none; padding: 0; margin: 0; display: grid; gap: .6rem; }
+  .list strong { font-size: .9rem; color: #fff; }
+
+  .contact { padding-bottom: 3rem; }
+  .contact > p { max-width: 40rem; }
+  .ready { font: .8rem var(--px); margin-top: 2.5rem; }
+
+  .foot { display: flex; flex-wrap: wrap; gap: 1.5rem; padding: 1.25rem clamp(1rem, 3vw, 2rem); border-top: 4px solid var(--bg2); font: .55rem var(--px); color: var(--dim); }
+
+  @media (max-width: 960px) {
+    .top nav { display: none; }
+    .hero, .two { grid-template-columns: minmax(0, 1fr); }
+    .sprite { max-width: 16rem; }
+    .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .focus, .projects { grid-template-columns: minmax(0, 1fr); }
+    .focus article, .focus article:nth-child(4), .focus article:nth-child(5) { grid-column: auto; }
+  }
+  @media (max-width: 520px) {
+    .boot-text .center { text-align: left; }
+    .num { font-size: 1.3rem; }
+    .dir li { grid-template-columns: 2.6rem minmax(0, 1fr); }
+    .prg { display: none; }
+    .btn { font-size: .55rem; }
+  }
+</style>
