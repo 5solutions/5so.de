@@ -1,10 +1,9 @@
-# Builds the Astro site and uploads it to the Surfer app on Cloudron (www.sobek.info) on every push to main.
-# Needs the repository secret SURFER_TOKEN (Surfer admin → Settings → Access Tokens).
+# Builds the site and uploads it to the Surfer app on Cloudron (www.sobek.info) – same script as `npm run deploy` locally.
+# Manual trigger only for now. To deploy on every push: add the repository secret SURFER_TOKEN
+# (Surfer admin → Access Tokens) and add `push: { branches: [main] }` under `on:`.
 name: Deploy to www.sobek.info
 
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -24,9 +23,6 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
-      - run: npm run build
-      # cloudron-surfer 6.x matches Surfer 6.9 on Cloudron 9.0; after the Cloudron/Surfer 7 update switch to @cloudron/surfer.
-      - name: Upload to Surfer
+      - run: npm run deploy
         env:
           SURFER_TOKEN: ${{ secrets.SURFER_TOKEN }}
-        run: npx -y cloudron-surfer@6.4.1 put --delete --server www.sobek.info --token "$SURFER_TOKEN" dist/* /
