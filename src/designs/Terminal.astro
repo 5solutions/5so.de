@@ -241,19 +241,19 @@ const commands = [
 </script>
 
 <style is:global>
-  :root {
+  :root[data-design="terminal"] {
     color-scheme: dark;
     --bg: #0d1117; --bar: #161b22; --line: #30363d; --fg: #d6dde5; --c: #8b949e;
     --g: #7ee787; --y: #e3b341; --b: #79c0ff; --p: #d2a8ff; --r: #ff7b72;
     --mono: 'JetBrains Mono Variable', ui-monospace, monospace;
   }
-  body { background: radial-gradient(70rem 40rem at 50% -20%, #2a2f6b 0%, transparent 60%), radial-gradient(50rem 30rem at 100% 100%, #3b1d4a, transparent 60%), #07080c;
+  [data-design="terminal"] body { background: radial-gradient(70rem 40rem at 50% -20%, #2a2f6b 0%, transparent 60%), radial-gradient(50rem 30rem at 100% 100%, #3b1d4a, transparent 60%), #07080c;
     color: var(--fg); font: 400 .95rem/1.6 var(--mono); min-height: 100vh; }
-  a { color: var(--b); }
-  ::selection { background: var(--b); color: var(--bg); }
-  :focus-visible { outline: 2px solid var(--y); outline-offset: 2px; }
-  .js-only { display: none !important; }
-  .js .js-only { display: flex !important; }
+  [data-design="terminal"] a { color: var(--b); }
+  [data-design="terminal"] ::selection { background: var(--b); color: var(--bg); }
+  [data-design="terminal"] :focus-visible { outline: 2px solid var(--y); outline-offset: 2px; }
+  [data-design="terminal"] .js-only { display: none !important; }
+  .js[data-design="terminal"] .js-only { display: flex !important; }
 </style>
 
 <style>

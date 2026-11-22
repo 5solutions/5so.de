@@ -29,7 +29,7 @@ const jsonLd = {
 };
 ---
 <!doctype html>
-<html lang="de">
+<html lang="de" data-design={design}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -85,7 +85,7 @@ const jsonLd = {
   }
   .switcher span { margin-right: .3rem; opacity: .7; }
   .switcher { flex-wrap: wrap; justify-content: flex-end; max-width: calc(100vw - 2rem); border-radius: 1.2rem; }
-  .switcher a {
+  nav.switcher a {
     display: grid; place-items: center; height: 2rem; padding: 0 .7rem; border-radius: 999px;
     color: #fff; text-decoration: none;
   }

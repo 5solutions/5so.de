@@ -142,17 +142,17 @@ const up = (s: string) => s.toUpperCase();
 </Base>
 
 <style is:global>
-  :root {
+  :root[data-design="c64"] {
     color-scheme: dark;
     /* C64 palette, brightened where needed for WCAG contrast on the blue screen */
     --border: #6c5eb5; --bg: #352879; --bg2: #2c2068; --fg: #d4ceff; --dim: #a69cf0;
     --cyan: #8fdde9; --green: #a8e890; --yellow: #eef59a; --red: #ff9d8c; --purple: #dba4f5;
     --px: 'Press Start 2P', monospace; --mono: 'JetBrains Mono Variable', ui-monospace, monospace;
   }
-  body { background: var(--border); color: var(--fg); font: 400 1rem/1.65 var(--mono); }
-  a { color: inherit; }
-  ::selection { background: var(--fg); color: var(--bg); }
-  :focus-visible { outline: 3px solid var(--yellow); outline-offset: 3px; }
+  [data-design="c64"] body { background: var(--border); color: var(--fg); font: 400 1rem/1.65 var(--mono); }
+  [data-design="c64"] a { color: inherit; }
+  [data-design="c64"] ::selection { background: var(--fg); color: var(--bg); }
+  [data-design="c64"] :focus-visible { outline: 3px solid var(--yellow); outline-offset: 3px; }
 </style>
 
 <style>

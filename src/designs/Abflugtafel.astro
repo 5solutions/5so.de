@@ -211,15 +211,15 @@ const tiles = (s: string) => up(s).split(' ');
 </script>
 
 <style is:global>
-  :root {
+  :root[data-design="abflugtafel"] {
     color-scheme: light;
     --sign: #ffcc00; --ink: #111214; --board: #16171a; --tile: #232428; --flap: #f3f1ea; --amber: #ffb000;
     --bg: #eef0f2; --muted: #5d6470; --ok: #3fd27a;
     --sans: 'Inter Variable', system-ui, sans-serif; --mono: 'JetBrains Mono Variable', ui-monospace, monospace;
   }
-  body { background: var(--bg); color: var(--ink); font: 400 1rem/1.6 var(--sans); }
-  a { color: inherit; }
-  :focus-visible { outline: 3px solid var(--sign); outline-offset: 3px; }
+  [data-design="abflugtafel"] body { background: var(--bg); color: var(--ink); font: 400 1rem/1.6 var(--sans); }
+  [data-design="abflugtafel"] a { color: inherit; }
+  [data-design="abflugtafel"] :focus-visible { outline: 3px solid var(--sign); outline-offset: 3px; }
 </style>
 
 <style>
@@ -255,8 +255,8 @@ const tiles = (s: string) => up(s).split(' ');
   .facts dt { font: 700 .68rem var(--sans); letter-spacing: .14em; text-transform: uppercase; color: #9ba0aa; }
   .facts dd { margin: 0; font: 600 1rem var(--mono); }
   .ok { color: var(--ok); }
-  .blink { animation: blink 1.2s steps(1) infinite; }
-  @keyframes blink { 50% { opacity: .2; } }
+  .blink { animation: blink-dim 1.2s steps(1) infinite; }
+  @keyframes blink-dim { 50% { opacity: .2; } }
   .checkin { background: var(--sign); color: var(--ink); text-decoration: none; font-weight: 800; padding: .8rem 1.2rem; border-radius: 6px; }
   .checkin:hover { background: #fff; }
 
@@ -319,7 +319,7 @@ const tiles = (s: string) => up(s).split(' ');
   .dest { font-weight: 700; color: #fff; letter-spacing: .02em; }
   .dom { color: #a9adb6; font-size: .82rem; }
   .st { font: 700 .72rem var(--sans); letter-spacing: .1em; text-transform: uppercase; color: var(--ok); text-align: right; }
-  .st.now { color: var(--sign); animation: blink 1.2s steps(1) infinite; }
+  .st.now { color: var(--sign); animation: blink-dim 1.2s steps(1) infinite; }
   .more { padding: 0 .75rem 1rem; margin-left: 14.5rem; color: #cfd2d8; font: .9rem/1.6 var(--sans); }
   .more p { margin: 0 0 .4rem; }
   .more a { color: var(--sign); }
