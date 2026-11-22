@@ -38,6 +38,6 @@ Live unter **https://www.sobek.info**. Gehostet in einer Surfer-App auf dem Clou
 
 - **Veröffentlichen:** `npm run deploy` baut die Seite und lädt `dist/` per Surfer-API hoch (`scripts/deploy.mjs`, entfernt auch veraltete Dateien). Der Token steht lokal in `.surfer-token` (git-ignoriert); Surfer-Admin: `https://www.sobek.info/_admin` → Access Tokens.
 - Optional per GitHub Action (`.github/workflows/deploy.yml`, derzeit nur manuell startbar) – dafür das Repo-Secret `SURFER_TOKEN` anlegen.
-- Weiterleitungen (in Cloudron unter App → Standort → Weiterleitungen): `sobek.info`, `5so.de` → `www.sobek.info`. `www.5so.de` folgt, sobald der DNS-Eintrag umgestellt ist.
+- Weiterleitungen (in Cloudron unter App → Standort → Weiterleitungen): `sobek.info`, `5so.de`, `www.5so.de` → `www.sobek.info` (www.5so.de per CNAME auf `my.rhenaniahinsbeck.de`).
 - DNS liegt bei Hetzner (Console, Projekt „5so“ bzw. „DNS Migrated“). Cloudron-Domain `sobek.info` steht auf „Manual“, damit Cloudron die Apple-Mail-Einträge (MX, SPF, DKIM) nicht anfasst.
 - Alte Jekyll-Seite: Tag `v1-jekyll` / Branch `legacy-jekyll`.
